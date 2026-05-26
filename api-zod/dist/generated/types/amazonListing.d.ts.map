@@ -1,0 +1,1 @@
+{"version":3,"file":"amazonListing.d.ts","sourceRoot":"","sources":["../../../src/generated/types/amazonListing.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AAEH,MAAM,WAAW,aAAa;IAC5B,KAAK,EAAE,MAAM,CAAC;IACd,YAAY,EAAE,MAAM,EAAE,CAAC;IACvB,WAAW,EAAE,MAAM,CAAC;IACpB,WAAW,EAAE,MAAM,EAAE,CAAC;IACtB,KAAK,CAAC,EAAE,MAAM,CAAC;CAChB"}

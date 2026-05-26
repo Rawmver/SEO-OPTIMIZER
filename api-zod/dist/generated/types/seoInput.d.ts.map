@@ -1,0 +1,1 @@
+{"version":3,"file":"seoInput.d.ts","sourceRoot":"","sources":["../../../src/generated/types/seoInput.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AAEH,MAAM,WAAW,QAAQ;IACvB,mBAAmB;IACnB,QAAQ,EAAE,MAAM,CAAC;IACjB,mBAAmB;IACnB,cAAc,EAAE,MAAM,CAAC;IACvB,yEAAyE;IACzE,MAAM,CAAC,EAAE,MAAM,EAAE,CAAC;CACnB"}
