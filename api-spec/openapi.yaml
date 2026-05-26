@@ -1,0 +1,744 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: seo
+    description: SEO analysis and optimization operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /seo/optimize:
+    post:
+      operationId: optimizeSeo
+      tags: [seo]
+      summary: Optimize SEO title and description using AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SeoInput"
+      responses:
+        "200":
+          description: Optimized SEO result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeoResult"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /seo/generate-image:
+    post:
+      operationId: generateImage
+      tags: [seo]
+      summary: Generate a product image using DALL-E 3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ImageGenerationInput"
+      responses:
+        "200":
+          description: Generated image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageGenerationResult"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Generation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /seo/history:
+    get:
+      operationId: listSeoHistory
+      tags: [seo]
+      summary: List all previous SEO optimization requests
+      responses:
+        "200":
+          description: List of SEO optimization history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SeoHistoryItem"
+  /seo/history/{id}:
+    get:
+      operationId: getSeoHistoryItem
+      tags: [seo]
+      summary: Get a specific SEO history item by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: SEO history item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeoHistoryItem"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    delete:
+      operationId: deleteSeoHistoryItem
+      tags: [seo]
+      summary: Delete a specific SEO history item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /seo/keyword-suggestions:
+    get:
+      operationId: getKeywordSuggestions
+      tags: [seo]
+      summary: Get Google keyword suggestions for a search query
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of keyword suggestions from Google
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeywordSuggestions"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /seo/stats:
+    get:
+      operationId: getSeoStats
+      tags: [seo]
+      summary: Get summary statistics for SEO optimizations
+      responses:
+        "200":
+          description: SEO statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeoStats"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    SeoInput:
+      type: object
+      required:
+        - rawTitle
+        - rawDescription
+      properties:
+        rawTitle:
+          type: string
+          minLength: 1
+        rawDescription:
+          type: string
+          minLength: 1
+        images:
+          type: array
+          items:
+            type: string
+          description: Base64 data URLs of uploaded product images for AI visual analysis
+    ImageGenerationInput:
+      type: object
+      required:
+        - prompt
+      properties:
+        prompt:
+          type: string
+          description: AI image generation prompt
+        size:
+          type: string
+          description: "1024x1024 | 1536x1024 | 1024x1536"
+        images:
+          type: array
+          items:
+            type: string
+          description: Optional base64 product images (data URLs) — used as reference to preserve product appearance
+    ImageGenerationResult:
+      type: object
+      required:
+        - b64Json
+      properties:
+        b64Json:
+          type: string
+          description: Base64-encoded PNG image from gpt-image-1
+    MasterListing:
+      type: object
+      required:
+        - productType
+        - psychologyAngle
+        - masterCopy
+        - features
+        - specifications
+        - packageIncludes
+      properties:
+        productType:
+          type: string
+          description: "comfort | budget | tech | premium | seasonal"
+        psychologyAngle:
+          type: string
+          description: "emotional | urgency | problem-solution | budget-value | premium-status"
+        masterCopy:
+          type: string
+          description: Single unified humanized copy block — emotion, persuasion and SEO invisibly woven into one natural flowing piece
+        features:
+          type: array
+          items:
+            type: string
+          description: Benefit-focused bullet points
+        specifications:
+          type: array
+          items:
+            type: string
+          description: Technical specifications in structured format
+        packageIncludes:
+          type: array
+          items:
+            type: string
+          description: What the buyer receives
+    KeywordStat:
+      type: object
+      required:
+        - keyword
+        - trend
+        - rank
+        - competition
+      properties:
+        keyword:
+          type: string
+        trend:
+          type: string
+          description: "high | medium | low"
+        rank:
+          type: integer
+        competition:
+          type: string
+          description: "high | medium | low"
+    AmazonListing:
+      type: object
+      required:
+        - title
+        - bulletPoints
+        - description
+        - searchTerms
+      properties:
+        title:
+          type: string
+        bulletPoints:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        searchTerms:
+          type: array
+          items:
+            type: string
+        score:
+          type: integer
+    EbayListing:
+      type: object
+      required:
+        - title
+        - description
+        - sellingTips
+      properties:
+        title:
+          type: string
+          description: Primary eBay title optimized for Cassini (≤80 chars)
+        titleVariations:
+          type: array
+          items:
+            type: string
+          description: A/B title alternatives to test CTR performance
+        buyerType:
+          type: string
+          description: "practical | emotional | budget | premium | trend | gift"
+        emotionalOverview:
+          type: string
+          description: Section 1 - Emotional product overview combining hook, purpose, lifestyle imagination and trust
+        benefitFeatures:
+          type: array
+          items:
+            type: string
+          description: Section 2 - Benefit-driven feature bullets (feature + WHY it matters)
+        description:
+          type: string
+          description: Full unified description for backward compatibility
+        itemSpecifics:
+          type: array
+          items:
+            type: string
+          description: Section 3 - Trust-optimized specifications
+        lifestyleUseCases:
+          type: array
+          items:
+            type: string
+          description: Section 4 - Real-life scenarios showing the buyer using the product
+        trustNotes:
+          type: array
+          items:
+            type: string
+          description: Section 6 - Low-risk trust reinforcement notes
+        softCta:
+          type: string
+          description: Section 7 - Soft psychological call-to-action
+        sellingTips:
+          type: array
+          items:
+            type: string
+        thumbnailStrategy:
+          $ref: "#/components/schemas/ThumbnailStrategy"
+        score:
+          type: integer
+          description: eBay Cassini optimization score 0-100
+    ThumbnailStrategy:
+      type: object
+      required:
+        - hookText
+        - colorScheme
+        - colorPsychology
+        - thumbnailLayout
+        - imageSequence
+        - mobileScore
+      properties:
+        hookText:
+          type: string
+          description: Primary emotional hook text to overlay on thumbnail (≤5 words)
+        secondaryHook:
+          type: string
+          description: Supporting subtext line (short benefit trio e.g. "Portable • Powerful • Perfect")
+        colorScheme:
+          type: string
+          description: Recommended color palette e.g. "Blue + White + Silver"
+        colorPsychology:
+          type: string
+          description: Why this color scheme maximizes trust and CTR for this product
+        thumbnailLayout:
+          type: string
+          description: Detailed thumbnail composition instructions for the hero image
+        mobileScore:
+          type: integer
+          description: Predicted mobile CTR score 0-100
+        imageSequence:
+          type: array
+          items:
+            $ref: "#/components/schemas/ThumbnailImageItem"
+          description: 9-image sequence in conversion-optimized order
+    ThumbnailImageItem:
+      type: object
+      required:
+        - order
+        - type
+        - description
+        - aiPrompt
+      properties:
+        order:
+          type: integer
+        type:
+          type: string
+          description: "Hero Thumbnail | Main Benefit | Lifestyle Usage | Features Infographic | Quality Closeup | Dimensions | Package Contents | Trust Reinforcement | Emotional Reinforcement"
+        description:
+          type: string
+          description: What this image should show and why it converts
+        aiPrompt:
+          type: string
+          description: Ready-to-use AI image generation prompt for this specific image
+    WebsiteListing:
+      type: object
+      required:
+        - metaTitle
+        - metaDescription
+        - h1
+      properties:
+        metaTitle:
+          type: string
+        metaDescription:
+          type: string
+        h1:
+          type: string
+        openGraphTitle:
+          type: string
+        openGraphDescription:
+          type: string
+        score:
+          type: integer
+    TiktokListing:
+      type: object
+      required:
+        - hook
+        - caption
+        - hashtags
+        - cta
+      properties:
+        hook:
+          type: string
+          description: First 3 seconds hook text to stop the scroll
+        caption:
+          type: string
+          description: Full TikTok video caption
+        hashtags:
+          type: array
+          items:
+            type: string
+        cta:
+          type: string
+          description: Call-to-action overlay text
+        viralAngle:
+          type: string
+          description: Viral concept idea for the video
+        emotionalHook:
+          type: string
+          description: Emotional trigger used to drive impulse purchases
+        score:
+          type: integer
+    ShopifyListing:
+      type: object
+      required:
+        - productTitle
+        - description
+        - seoTitle
+        - seoDescription
+      properties:
+        productTitle:
+          type: string
+        description:
+          type: string
+          description: Lifestyle-oriented HTML product description
+        seoTitle:
+          type: string
+        seoDescription:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        collectionSuggestion:
+          type: string
+        score:
+          type: integer
+    BuyerIntelligence:
+      type: object
+      required:
+        - intentType
+        - intentConfidence
+        - emotionalTriggers
+        - buyerPersona
+        - conversionTips
+      properties:
+        intentType:
+          type: string
+          description: "practical | emotional | budget | premium | trend | gift"
+        intentConfidence:
+          type: integer
+          description: Confidence score 0-100
+        emotionalTriggers:
+          type: array
+          items:
+            type: string
+          description: Key emotional triggers that drive this buyer
+        buyerPersona:
+          type: string
+          description: Short description of the ideal buyer
+        painPoints:
+          type: array
+          items:
+            type: string
+        conversionTips:
+          type: array
+          items:
+            type: string
+          description: Specific conversion rate optimization tips
+        thumbnailSuggestions:
+          type: array
+          items:
+            type: string
+          description: AI-generated thumbnail/image suggestions
+    CompetitivePositioning:
+      type: object
+      required:
+        - uniqueSellingPoints
+        - pricePositioning
+        - competitiveAdvantages
+      properties:
+        uniqueSellingPoints:
+          type: array
+          items:
+            type: string
+        pricePositioning:
+          type: string
+          description: "budget | mid-range | premium"
+        competitiveAdvantages:
+          type: array
+          items:
+            type: string
+        marketingAngles:
+          type: array
+          items:
+            type: string
+        weaknesses:
+          type: array
+          items:
+            type: string
+    OtherPlatforms:
+      type: object
+      properties:
+        etsy:
+          type: object
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+            tags:
+              type: array
+              items:
+                type: string
+        walmart:
+          type: object
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+        googleShopping:
+          type: object
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+    SeoResult:
+      type: object
+      required:
+        - id
+        - rawTitle
+        - rawDescription
+        - optimizedTitle
+        - optimizedDescription
+        - keywords
+        - keywordDensity
+        - titleScore
+        - descriptionScore
+        - suggestions
+        - createdAt
+      properties:
+        id:
+          type: integer
+        rawTitle:
+          type: string
+        rawDescription:
+          type: string
+        optimizedTitle:
+          type: string
+        optimizedDescription:
+          type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        keywordDensity:
+          type: number
+        titleScore:
+          type: integer
+        descriptionScore:
+          type: integer
+        suggestions:
+          type: array
+          items:
+            type: string
+        keywordStats:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeywordStat"
+        psychologyStrategies:
+          type: array
+          items:
+            type: string
+        amazonListing:
+          $ref: "#/components/schemas/AmazonListing"
+        ebayListing:
+          $ref: "#/components/schemas/EbayListing"
+        websiteListing:
+          $ref: "#/components/schemas/WebsiteListing"
+        tiktokListing:
+          $ref: "#/components/schemas/TiktokListing"
+        shopifyListing:
+          $ref: "#/components/schemas/ShopifyListing"
+        otherPlatforms:
+          $ref: "#/components/schemas/OtherPlatforms"
+        buyerIntelligence:
+          $ref: "#/components/schemas/BuyerIntelligence"
+        masterListing:
+          $ref: "#/components/schemas/MasterListing"
+        competitivePositioning:
+          $ref: "#/components/schemas/CompetitivePositioning"
+        createdAt:
+          type: string
+          format: date-time
+    SeoHistoryItem:
+      type: object
+      required:
+        - id
+        - rawTitle
+        - rawDescription
+        - optimizedTitle
+        - optimizedDescription
+        - keywords
+        - keywordDensity
+        - titleScore
+        - descriptionScore
+        - suggestions
+        - createdAt
+      properties:
+        id:
+          type: integer
+        rawTitle:
+          type: string
+        rawDescription:
+          type: string
+        optimizedTitle:
+          type: string
+        optimizedDescription:
+          type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        keywordDensity:
+          type: number
+        titleScore:
+          type: integer
+        descriptionScore:
+          type: integer
+        suggestions:
+          type: array
+          items:
+            type: string
+        keywordStats:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeywordStat"
+        psychologyStrategies:
+          type: array
+          items:
+            type: string
+        amazonListing:
+          $ref: "#/components/schemas/AmazonListing"
+        ebayListing:
+          $ref: "#/components/schemas/EbayListing"
+        websiteListing:
+          $ref: "#/components/schemas/WebsiteListing"
+        tiktokListing:
+          $ref: "#/components/schemas/TiktokListing"
+        shopifyListing:
+          $ref: "#/components/schemas/ShopifyListing"
+        otherPlatforms:
+          $ref: "#/components/schemas/OtherPlatforms"
+        buyerIntelligence:
+          $ref: "#/components/schemas/BuyerIntelligence"
+        masterListing:
+          $ref: "#/components/schemas/MasterListing"
+        competitivePositioning:
+          $ref: "#/components/schemas/CompetitivePositioning"
+        createdAt:
+          type: string
+          format: date-time
+    SeoStats:
+      type: object
+      required:
+        - totalOptimizations
+        - avgTitleScore
+        - avgDescriptionScore
+        - topKeywords
+      properties:
+        totalOptimizations:
+          type: integer
+        avgTitleScore:
+          type: number
+        avgDescriptionScore:
+          type: number
+        topKeywords:
+          type: array
+          items:
+            type: string
+    KeywordSuggestions:
+      type: object
+      required:
+        - query
+        - suggestions
+      properties:
+        query:
+          type: string
+        suggestions:
+          type: array
+          items:
+            type: string
+    ApiError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
